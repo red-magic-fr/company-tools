@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\ClientRequest;
+use App\Http\Requests\DocumentTypeRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class ClientCrudController
+ * Class DocumentTypeCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class ClientCrudController extends CrudController
+class DocumentTypeCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class ClientCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Client::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/client');
-        CRUD::setEntityNameStrings('client', 'clients');
+        CRUD::setModel(\App\Models\DocumentType::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/document-type');
+        CRUD::setEntityNameStrings('document type', 'document types');
     }
 
     /**
@@ -39,9 +39,8 @@ class ClientCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+        CRUD::column('id')->type('integer')->label('#');
         CRUD::column('label')->type('string');
-        CRUD::column('email')->type('string');
-        CRUD::column('address')->type('string');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -58,11 +57,9 @@ class ClientCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(ClientRequest::class);
+        CRUD::setValidation(DocumentTypeRequest::class);
 
         CRUD::field('label')->type('text');
-        CRUD::field('email')->type('text');
-        CRUD::field('address')->type('textarea');
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:

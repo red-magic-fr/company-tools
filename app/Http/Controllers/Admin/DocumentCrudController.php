@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\ClientRequest;
+use App\Http\Requests\DocumentRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
- * Class ClientCrudController
+ * Class DocumentCrudController
  * @package App\Http\Controllers\Admin
  * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
  */
-class ClientCrudController extends CrudController
+class DocumentCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
@@ -26,9 +26,9 @@ class ClientCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Client::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/client');
-        CRUD::setEntityNameStrings('client', 'clients');
+        CRUD::setModel(\App\Models\Document::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/document');
+        CRUD::setEntityNameStrings('document', 'documents');
     }
 
     /**
@@ -40,8 +40,6 @@ class ClientCrudController extends CrudController
     protected function setupListOperation()
     {
         CRUD::column('label')->type('string');
-        CRUD::column('email')->type('string');
-        CRUD::column('address')->type('string');
 
         /**
          * Columns can be defined using the fluent syntax or array syntax:
@@ -58,11 +56,45 @@ class ClientCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(ClientRequest::class);
+        CRUD::setValidation(DocumentRequest::class);
 
-        CRUD::field('label')->type('text');
-        CRUD::field('email')->type('text');
-        CRUD::field('address')->type('textarea');
+        CRUD::field('type')->type('relationship')->attribute('label');
+
+        CRUD::field('client')->type('relationship')->attribute('label');
+
+        // TODO Default
+        CRUD::field('number')->type('number');
+
+        CRUD::field('edition_date')->type('date')->default(date('Y-m-d'));
+
+        // TODO Lines
+        $this->crud->addField([   // repeatable
+            'name' => 'lines',
+            'label' => 'Lines',
+            'type' => 'repeatable',
+            'fields' => [
+                [
+                    'name' => 'id',
+                    'type' => 'hidden'
+                ],
+                [
+                    'name' => 'label',
+                    'type' => 'text',
+                    'label' => 'Label',
+                    'wrapper' => ['class' => 'form-group col-md-8'],
+                ],
+                [
+                    'name' => 'price',
+                    'type' => 'number',
+                    'label' => 'Price',
+                    'wrapper' => ['class' => 'form-group col-md-4'],
+                ]
+            ],
+
+            // optional
+            'new_item_label' => 'Add Line', // customize the text of the button
+        ]);
+
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
